@@ -1,0 +1,30 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+    <title>Isochronal Nancy Demo</title>
+    <script type="text/javascript" language="javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+    <script type="text/javascript" language="javascript" src="@Path['~/Content/isochronal.js'];"></script>
+    <script language="javascript" type="text/javascript">
+        var callCount = 0;
+        var callCount2 = 0;
+
+        $(function () {
+            var token = $.poll({
+                url: "@Path['~/clock']",
+                timeout: 500,
+                changed: function ( data ) {
+                   var results = $('#results');
+                   results.append($("<p>Time now " + data + "</p>"));
+                },
+                autoStart: true
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Isochronal Nancy Demo</h1>
+    <p>Makes polling calls to an ajax service and updates when things 'change'.</p>
+    <p>In this demo the we poll a service every half a second that returns the time to the current second.</p>
+    <span style="display: block; float: left; width: 400px;" id="results">Results:</span>
+</body>
+</html>
