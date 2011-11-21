@@ -1,17 +1,17 @@
-describe("isochronal", function ( ) {
-    it("should set the timer if auto start is on", function ( ) {
+describe("isochronal", function () {
+    it("should set the timer if auto start is on", function () {
         spyOn(window, "setTimeout");
         $.poll({ url: "testing", autoStart: true, cacheControl: false });
         expect(window.setTimeout).toHaveBeenCalled();
     });
 
-    it("should not set the timer if auto start is off", function ( ) {
+    it("should not set the timer if auto start is off", function () {
         spyOn(window, "setTimeout");
         $.poll({ url: "testing", autoStart: false, cacheControl: false });
         expect(window.setTimeout).not.toHaveBeenCalled();
     });
 
-    it("should not create a new timer if already running when start is called", function ( ) {
+    it("should not create a new timer if already running when start is called", function () {
         spyOn(window, "setTimeout");
         var token = $.poll({ url: "testing", autoStart: true, cacheControl: false });
         window.setTimeout.reset();
@@ -19,7 +19,7 @@ describe("isochronal", function ( ) {
         expect(window.setTimeout).not.toHaveBeenCalled();
     });
 
-    it("should create a new timer if not already running when start is called", function ( ) {
+    it("should create a new timer if not already running when start is called", function () {
         spyOn(window, "setTimeout");
         var token = $.poll({ url: "testing", autoStart: false, cacheControl: false });
         window.setTimeout.reset();
@@ -27,7 +27,7 @@ describe("isochronal", function ( ) {
         expect(window.setTimeout).toHaveBeenCalled();
     });
 
-    it("should clear the timeout if running when stop is called", function ( ) {
+    it("should clear the timeout if running when stop is called", function () {
         spyOn(window, "setTimeout");
         spyOn(window, "clearTimeout");
         var token = $.poll({ url: "testing", autoStart: true, cacheControl: false });
@@ -35,7 +35,7 @@ describe("isochronal", function ( ) {
         expect(window.clearTimeout).toHaveBeenCalled();
     });
 
-    it("should not clear the timeout if not running when stop is called", function ( ) {
+    it("should not clear the timeout if not running when stop is called", function () {
         spyOn(window, "setTimeout");
         spyOn(window, "clearTimeout");
         var token = $.poll({ url: "testing", autoStart: false, cacheControl: false });
@@ -43,7 +43,7 @@ describe("isochronal", function ( ) {
         expect(window.clearTimeout).not.toHaveBeenCalled();
     });
 
-    it("should be able to start again once stopped", function ( ) {
+    it("should be able to start again once stopped", function () {
         spyOn(window, "setTimeout");
         spyOn(window, "clearTimeout");
         var token = $.poll({ url: "testing", autoStart: true, cacheControl: false });
@@ -53,13 +53,13 @@ describe("isochronal", function ( ) {
         expect(window.setTimeout).toHaveBeenCalled();
     });
 
-    it("should set tick timeout if passed in via options", function ( ) {
+    it("should set tick timeout if passed in via options", function () {
         spyOn(window, "setTimeout");
         $.poll({ url: "testing", autoStart: true, tick: 500, cacheControl: false });
         expect(window.setTimeout.mostRecentCall.args[1]).toEqual(500);
     });
 
-    it("should execute ajax request", function ( ) {
+    it("should execute ajax request", function () {
         spyOn($, "ajax");
         $.poll({ url: "testing", autoStart: true, cacheControl: false });
         waitsFor(function() {
@@ -70,12 +70,12 @@ describe("isochronal", function ( ) {
         });
     });
 
-    it("should execute user success function if supplied", function ( ) {
+    it("should execute user success function if supplied", function () {
         spyOn($, "ajax").andCallFake(function(options) {
             options.success();
         });
         var called = false;
-        $.poll({ url: "testing", autoStart: true, success: function ( ) { called = true; }, cacheControl: false });
+        $.poll({ url: "testing", autoStart: true, success: function () { called = true; }, cacheControl: false });
         waitsFor(function() {
             return $.ajax.callCount > 0;
         });
@@ -84,12 +84,12 @@ describe("isochronal", function ( ) {
         });
     });
 
-    it("should execute comparison function if supplied", function ( ) {
+    it("should execute comparison function if supplied", function () {
         spyOn($, "ajax").andCallFake(function(options) {
             options.success();
         });
         var called = false;
-        $.poll({ url: "testing", autoStart: true, comparison: function ( ) { called = true; return false; }, cacheControl: false });
+        $.poll({ url: "testing", autoStart: true, comparison: function () { called = true; return false; }, cacheControl: false });
         waitsFor(function() {
             return $.ajax.callCount > 0;
         });
@@ -98,7 +98,7 @@ describe("isochronal", function ( ) {
         });
     });
 
-    it("should not execute changed function if data is the same", function ( ) {
+    it("should not execute changed function if data is the same", function () {
         spyOn($, "ajax").andCallFake(function(options) {
             options.success();
         });
@@ -106,8 +106,8 @@ describe("isochronal", function ( ) {
         $.poll({
             url: "testing",
             autoStart: true,
-            comparison: function ( ) { return true; },
-            changed: function ( ) { called = true; },
+            comparison: function () { return true; },
+            changed: function () { called = true; },
             cacheControl: false
         });
         waitsFor(function() {
@@ -118,7 +118,7 @@ describe("isochronal", function ( ) {
         });
     });
 
-    it("should execute changed function if data has changed", function ( ) {
+    it("should execute changed function if data has changed", function () {
         spyOn($, "ajax").andCallFake(function(options) {
             options.success();
         });
@@ -126,8 +126,8 @@ describe("isochronal", function ( ) {
         $.poll({
             url: "testing",
             autoStart: true,
-            comparison: function ( ) { return false; },
-            changed: function ( ) { called = true; },
+            comparison: function () { return false; },
+            changed: function () { called = true; },
             cacheControl: false
         });
         waitsFor(function() {
@@ -138,14 +138,14 @@ describe("isochronal", function ( ) {
         });
     });
 
-    it("should schedule another poll when previous one returns", function ( ) {
-        spyOn(window, "setTimeout").andCallFake(function ( func, timeout ) {
+    it("should schedule another poll when previous one returns", function () {
+        spyOn(window, "setTimeout").andCallFake(function (func, timeout) {
             if (window.setTimeout.callCount === 1)
                 func();
         });
         spyOn($, "ajax").andCallFake(function(options) {
             options.success();
-            options.complete({ status: 200 }, "success");
+            options.complete({ status: 200, getResponseHeader: function (header) { return null } }, "success");
         });
         $.poll({ url: "testing", autoStart: true, async: false, cacheControl: false });
         waitsFor(function() {
@@ -156,17 +156,17 @@ describe("isochronal", function ( ) {
         });
     });
 
-    it("should call tick decay function when setting the timeout again", function ( ) {
+    it("should call tick decay function when setting the timeout again", function () {
         spyOn($, "ajax").andCallFake(function(options) {
             options.success();
-            options.complete({ status: 200 }, "success");
+            options.complete({ status: 200, getResponseHeader: function (header) { return null } }, "success");
         });
         var called = false;
         $.poll({
             url: "testing",
             autoStart: true,
-            comparison: function ( ) { return false; },
-            tickModifier: function ( ) { called = true; },
+            comparison: function () { return false; },
+            tickModifier: function () { called = true; },
             cacheControl: false
         });
         waitsFor(function() {
@@ -177,20 +177,20 @@ describe("isochronal", function ( ) {
         });
     });
 
-    it("should use value from the decay function to determine next timer tick", function ( ) {
+    it("should use value from the decay function to determine next timer tick", function () {
         spyOn($, "ajax").andCallFake(function(options) {
             options.success();
-            options.complete({ status: 200 }, "success");
+            options.complete({ status: 200, getResponseHeader: function (header) { return null } }, "success");
         });
-        spyOn(window, "setTimeout").andCallFake(function ( func, timeout ) {
+        spyOn(window, "setTimeout").andCallFake(function (func, timeout) {
             if (window.setTimeout.callCount === 1)
                 func();
         });
         $.poll({
             url: "testing",
             autoStart: true,
-            comparison: function ( ) { return false; },
-            tickModifier: function ( ) { return 1234; },
+            comparison: function () { return false; },
+            tickModifier: function () { return 1234; },
             cacheControl: false
         });
         waitsFor(function() {
@@ -201,12 +201,12 @@ describe("isochronal", function ( ) {
         });
     });
 
-    it("should pass in changed, http status, text status and current tick to decay function", function ( ) {
+    it("should pass in changed, http status, text status and current tick to decay function", function () {
         spyOn($, "ajax").andCallFake(function(options) {
             options.success();
-            options.complete({ status: 200 }, "success");
+            options.complete({ status: 200, getResponseHeader: function (header) { return null } }, "success");
         });
-        spyOn(window, "setTimeout").andCallFake(function ( func, timeout ) {
+        spyOn(window, "setTimeout").andCallFake(function (func, timeout) {
             if (window.setTimeout.callCount === 1)
                 func();
         });
@@ -215,7 +215,7 @@ describe("isochronal", function ( ) {
             url: "testing",
             autoStart: true,
             tick: 9876,
-            comparison: function ( ) { return false; },
+            comparison: function () { return false; },
             tickModifier: function ( hasChanged, statusCode, statusText, currentTick ) {
                 result = {
                     hasChanged: hasChanged,
@@ -237,5 +237,95 @@ describe("isochronal", function ( ) {
             expect(result.statusText).toEqual('success');
             expect(result.currentTick).toEqual(9876);
         });
-    })
+    });
+    
+    it("should increase tick count if below server minimum header", function () {
+        spyOn(window, "setTimeout").andCallFake(function (func, timeout) {
+            if (window.setTimeout.callCount === 1)
+                func();
+        });
+        spyOn($, "ajax").andCallFake(function(options) {
+            options.complete({
+                status: 200,
+                getResponseHeader: function (header) {
+                    return header === "Isochronal-Timeout" ? "500-1000" : null;
+                }
+            }, "success");
+        });
+
+        var token = $.poll({
+            url: "testing",
+            autoStart: true,
+            tick: 9876,
+            comparison: function () { return false; },
+            tickModifier: function () { return 100; }
+        });
+
+        waitsFor(function() {
+            return $.ajax.callCount > 0;
+        });
+        runs(function() {
+            expect(token.settings.tick).toEqual(500);
+        });
+    });
+
+    it("should decrease tick count if above server minimum header", function () {
+        spyOn(window, "setTimeout").andCallFake(function (func, timeout) {
+            if (window.setTimeout.callCount === 1)
+                func();
+        });
+        spyOn($, "ajax").andCallFake(function(options) {
+            options.complete({
+                status: 200,
+                getResponseHeader: function (header) {
+                    return header === "Isochronal-Timeout" ? "500-1000" : null;
+                }
+            }, "success");
+        });
+
+        var token = $.poll({
+            url: "testing",
+            autoStart: true,
+            tick: 9876,
+            comparison: function () { return false; },
+            tickModifier: function () { return 1100; }
+        });
+
+        waitsFor(function() {
+            return $.ajax.callCount > 0;
+        });
+        runs(function() {
+            expect(token.settings.tick).toEqual(1000);
+        });
+    });
+
+    it("should not alter tick count if within server header bounds", function () {
+        spyOn(window, "setTimeout").andCallFake(function (func, timeout) {
+            if (window.setTimeout.callCount === 1)
+                func();
+        });
+        spyOn($, "ajax").andCallFake(function(options) {
+            options.complete({
+                status: 200,
+                getResponseHeader: function (header) {
+                    return header === "Isochronal-Timeout" ? "500-1000" : null;
+                }
+            }, "success");
+        });
+
+        var token = $.poll({
+            url: "testing",
+            autoStart: true,
+            tick: 9876,
+            comparison: function () { return false; },
+            tickModifier: function () { return 750; }
+        });
+
+        waitsFor(function() {
+            return $.ajax.callCount > 0;
+        });
+        runs(function() {
+            expect(token.settings.tick).toEqual(750);
+        });
+    });
 });

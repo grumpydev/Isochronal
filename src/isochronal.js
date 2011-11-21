@@ -17,6 +17,47 @@
             options.cacheControl = false;
         }
 
+        var getStartEndFromHeader = function (headerValue) {
+            if (!headerValue) {
+                return null;
+            }
+
+            var range = headerValue.split("-", 2);
+            if (range.length !== 2) {
+                return null;
+            }
+
+            var start = parseInt(range[0], 10);
+            var end = parseInt(range[1], 10);
+
+            if (isNaN(start) || isNaN(end) || start < 0 || end < 0 || end < start) {
+                return null;
+            }
+
+            return {
+                start: start,
+                end: end
+            };
+        };
+
+        var coerceTick = function (currentTick, headerValue) {
+            var parsedHeader = getStartEndFromHeader(headerValue);
+
+            if (!parsedHeader) {
+                return currentTick;
+            }
+
+            if (currentTick < parsedHeader.start) {
+                return parsedHeader.start;
+            }
+
+            if (currentTick > parsedHeader.end) {
+                return parsedHeader.end;
+            }
+
+            return currentTick;
+        };
+
         var periodical = (function () {
             var previousResponse = '';
             var hasChanged = false;
@@ -63,6 +104,8 @@
                             }
 
                             options.tick = options.tickModifier(hasChanged, jqXHR.status, textStatus, options.tick);
+
+                            options.tick = coerceTick(options.tick, jqXHR.getResponseHeader("Isochronal-Timeout"));
 
                             execute();
                         }
