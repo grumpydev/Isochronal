@@ -11,20 +11,46 @@
         $(function () {
             var token = $.poll({
                 url: "@Path['~/clock']",
-                timeout: 500,
-                changed: function ( data ) {
-                   var results = $('#results');
-                   results.append($("<p>Time now " + data + "</p>"));
+                tick: 500,
+                complete: function () {
+                    $("#currentTick").text(token.settings.tick);
+                },
+                changed: function (data) {
+                    var results = $('#results');
+                    results.append($("<p>Time now " + data + "</p>"));
                 },
                 autoStart: true
             });
+
+            $("#setNewTick").bind("click", function () {
+                var newTick = parseInt($("#newTick").val());
+
+                if (isNaN(newTick)) {
+                    return;
+                }
+
+                token.settings.tick = newTick;
+                $("#currentTick").text(token.settings.tick);
+            });
+            $("#currentTick").text(token.settings.tick);
         });
     </script>
 </head>
 <body>
     <h1>Isochronal Nancy Demo</h1>
     <p>Makes polling calls to an ajax service and updates when things 'change'.</p>
-    <p>In this demo the we poll a service every half a second that returns the time to the current second.</p>
+    <p>In this demo the we poll a service every half a second (initially) that returns the time to the current second.</p>
+    <p>The server also returns headers that restrict the "polling tick" between 500ms and 5000ms - setting the tick outside
+       these bounds will have the value coerced back when the next tick occurs.
+    </p>
     <span style="display: block; float: left; width: 400px;" id="results">Results:</span>
+    <span style="display: block; float: left; width: 400px;" id="tick">
+        Current Tick:
+        <input id="newTick"/>
+        <input type="button" id="setNewTick" value="Set"/>
+        <br/>
+        <span>Current Tick: </span>
+        <span id="currentTick">-</span>
+    </span>
 </body>
 </html>
